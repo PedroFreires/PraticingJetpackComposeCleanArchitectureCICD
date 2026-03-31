@@ -6,10 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -30,22 +33,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import com.example.cleanarchitecturecicdjetpackcompose.Apresentacao.ViewModel.AFazerViewModel
+import com.example.cleanarchitecturecicdjetpackcompose.Apresentacao.ViewModel.AFazerViewModelFactory
+import com.example.cleanarchitecturecicdjetpackcompose.Dados.FakeAFazerDadosRepository
+import com.example.cleanarchitecturecicdjetpackcompose.Dominio.AdicionarAFazerCasoDeUso
 import com.example.cleanarchitecturecicdjetpackcompose.ui.theme.CleanArchitectureCICDJetpackComposeTheme
 
 class AFazerTarefa : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val repository = FakeAFazerDadosRepository() // O ideal é trocar por um real
+        val useCase = AdicionarAFazerCasoDeUso(repository)
+        val factory = AFazerViewModelFactory(useCase)
+
+        val viewModel = ViewModelProvider(this, factory)[AFazerViewModel::class.java]
+
         enableEdgeToEdge()
         setContent {
             CleanArchitectureCICDJetpackComposeTheme {
-                TelaComToolbar()
+                TelaComToolbar(viewModel)
             }
         }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaComToolbar() {
+fun TelaComToolbar(viewModel: AFazerViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,17 +73,17 @@ fun TelaComToolbar() {
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            TelaDeTarefas()
+            TelaDeTarefas(viewModel)
         }
     }
 }
 
 @Composable
-fun TelaDeTarefas() {
+fun TelaDeTarefas(viewModel: AFazerViewModel) {
     // Estado para o texto do TextField
     var tarefaTexto by remember { mutableStateOf("") }
-    // Estado para a lista de tarefas (simulando o que vai pro LazyColumn)
-    var listaDeTarefas by remember { mutableStateOf(listOf<Pair<String, Boolean>>()) }
+    // Estado para a lista de tarefas
+    var listaDeTarefas = viewModel.tarefas
 
     Column(
         modifier = Modifier
@@ -97,7 +112,7 @@ fun TelaDeTarefas() {
                 ),
                 onClick = {
                     if (tarefaTexto.isNotBlank()) {
-                        listaDeTarefas = listaDeTarefas + (tarefaTexto to false)
+                        viewModel.adicionarTarefa(tarefaTexto)
                         tarefaTexto = "" // Limpa o campo (Requisito 3 do seu teste)
                     }
                 },
@@ -107,25 +122,30 @@ fun TelaDeTarefas() {
         }
 
         // 3. Exibição das tarefas (Para o Requisito 2 do seu teste)
-        listaDeTarefas.forEachIndexed { index, tarefa ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-            ) {
-                Checkbox(
-                    checked = tarefa.second,
-                    onCheckedChange = { isChecked ->
-                        //Atualiza o estado do checkbox
-                        val novaLista = listaDeTarefas.toMutableList()
-                        novaLista[index] = tarefa.first to isChecked
-                        listaDeTarefas = novaLista
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color(0xFFC01119),   // Cor do fundo quando marcado
-                        checkmarkColor = Color.White
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+
+            items(listaDeTarefas) { tarefa ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                ) {
+                    Checkbox(
+                        checked = tarefa.isChecked,
+                        onCheckedChange = { isChecked ->
+                            //Atualiza o estado do checkbox
+                            viewModel.alternarTarefa(tarefa)
+                        },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color(0xFFC01119),   // Cor do fundo quando marcado
+                            checkmarkColor = Color.White
+                        )
                     )
-                )
-                Text(text = tarefa.first)
+                    Text(text = tarefa.tarefa)
+                }
             }
         }
     }
@@ -134,7 +154,10 @@ fun TelaDeTarefas() {
 @Composable
 fun TelaDeTarefasPreview() {
     CleanArchitectureCICDJetpackComposeTheme() {
+        val repository = FakeAFazerDadosRepository() // O ideal é trocar por um real
+        val useCase = AdicionarAFazerCasoDeUso(repository)
+        val viewModel = AFazerViewModel(useCase)
 
-        TelaDeTarefas()
+        TelaDeTarefas(viewModel)
     }
 }
