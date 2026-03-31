@@ -8,10 +8,7 @@ import org.junit.Test
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class StepsTest {
-//    @Test
-//    fun addition_isCorrect() {
-//        assertEquals(4, 2 + 2)
-//    }
+
     @Test
     fun UI() {
 
@@ -24,16 +21,6 @@ class StepsTest {
     // 2. deve criar uma nova tarefa toogle button no reclyclerview com o conteudo inserido no TextView
     // 3. e deve apagar o conteúdo do escrito no TextView
 
-    }
-
-    @Test
-    fun Dados() {
-
-    }
-
-    @Test
-    fun Dominio() {
-        //
     }
 
 }

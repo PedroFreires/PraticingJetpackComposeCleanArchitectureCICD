@@ -24,6 +24,14 @@ jobs:
       - name: Dar permissão ao Gradle
         run: chmod +x gradlew
 
+  # 1. Validação de Qualidade
+      - name: Rodar Linter
+        run: ./gradlew lintDebug
+
+  # 2. Validação de Lógica (TDD)
+      - name: Rodar Testes de Unidade
+        run: ./gradlew test
+
       - name: Compilar e Gerar APK (Build)
         run: ./gradlew assembleDebug
 

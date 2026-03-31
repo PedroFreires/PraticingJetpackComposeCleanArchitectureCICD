@@ -7,7 +7,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+// Casos de uso do Aplicativo
+
 class AdicionarAFazerCasoDeUsoTest {
+    @Test
 
     @Test
     fun deveAdicionarTarefaComSucesso() {
