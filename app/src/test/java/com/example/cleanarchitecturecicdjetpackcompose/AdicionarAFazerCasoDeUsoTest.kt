@@ -10,7 +10,6 @@ import org.junit.Test
 // Casos de uso do Aplicativo
 
 class AdicionarAFazerCasoDeUsoTest {
-    @Test
 
     @Test
     fun deveAdicionarTarefaComSucesso() {
