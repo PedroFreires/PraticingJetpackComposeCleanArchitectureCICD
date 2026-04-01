@@ -39,6 +39,7 @@ import com.example.cleanarchitecturecicdjetpackcompose.Apresentacao.ViewModel.AF
 import com.example.cleanarchitecturecicdjetpackcompose.Dados.FakeAFazerDadosRepository
 import com.example.cleanarchitecturecicdjetpackcompose.Dominio.AdicionarAFazerCasoDeUso
 import com.example.cleanarchitecturecicdjetpackcompose.ui.theme.CleanArchitectureCICDJetpackComposeTheme
+import android.view.View
 
 class AFazerTarefa : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
