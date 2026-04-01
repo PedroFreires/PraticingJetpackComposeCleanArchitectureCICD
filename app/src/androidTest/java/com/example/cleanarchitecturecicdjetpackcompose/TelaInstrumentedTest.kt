@@ -6,8 +6,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.cleanarchitecturecicdjetpackcompose.Apresentacao.ViewModel.AFazerViewModel
 import com.example.cleanarchitecturecicdjetpackcompose.Apresentacao.ui.screens.TelaDeTarefas
+import com.example.cleanarchitecturecicdjetpackcompose.Dados.FakeAFazerDadosRepository
+import com.example.cleanarchitecturecicdjetpackcompose.Dominio.AdicionarAFazerCasoDeUso
 import com.example.cleanarchitecturecicdjetpackcompose.ui.theme.CleanArchitectureCICDJetpackComposeTheme
+import org.junit.Before
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,11 +28,21 @@ class TelaInstrumentedTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private lateinit var viewModel: AFazerViewModel
+
+    @Before
+    fun setup() {
+        // Preparamos a arquitetura fake para o teste de UI
+        val repository = FakeAFazerDadosRepository()
+        val useCase = AdicionarAFazerCasoDeUso(repository)
+        viewModel = AFazerViewModel(useCase)
+    }
+
     @Test
     fun textField_deveTerHintCorreto() {
         composeTestRule.setContent {
             CleanArchitectureCICDJetpackComposeTheme {
-                TelaDeTarefas()
+                TelaDeTarefas(viewModel)
             }
         }
         // 1. Verifica o hint "Insira uma tarefa"
@@ -40,7 +54,7 @@ class TelaInstrumentedTest {
 
         composeTestRule.setContent {
             CleanArchitectureCICDJetpackComposeTheme {
-                TelaDeTarefas()
+                TelaDeTarefas(viewModel)
             }
         }
         val inputText = "Comprar leite"

@@ -12,6 +12,14 @@ import org.junit.Test
 class AdicionarAFazerCasoDeUsoTest {
 
     @Test
+    fun nomeDaFuncaoRetornaTrueMesmoSendoFalse() {
+        val resultadoEsperado = 1
+        val resultadoReal = 2
+
+        assertEquals(resultadoEsperado, resultadoReal)
+    }
+
+    @Test
     fun deveAdicionarTarefaComSucesso() {
         val repository = FakeAFazerRepository()
         val useCase = AdicionarAFazerCasoDeUso(repository)
