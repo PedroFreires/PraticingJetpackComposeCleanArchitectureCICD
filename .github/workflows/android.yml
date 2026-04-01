@@ -27,7 +27,7 @@ jobs:
     # Validação de Qualidade
       - name: Rodar Linter
         run: ./gradlew lintDebug
-        continue-on-error: true
+        continue-on-error: true #Remover se quiser que o build falhe com imports inúteis
 
     # Validação de Lógica (TDD)
       - name: Rodar Testes de Unidade
@@ -40,6 +40,13 @@ jobs:
         with:
             name: relatorio-linter
             path: app/build/reports/lint-results-debug.html
+
+      - name: Salvar Relatório de Testes (Caso falhe)
+        uses: actions/upload-artifact@v4
+        if: failure() # Só salva se algum teste der erro
+        with:
+          name: resultado-dos-testes
+          path: app/build/reports/tests/testDebugUnitTest/index.html
 
       - name: Compilar e Gerar APK (Build)
         run: ./gradlew assembleDebug
